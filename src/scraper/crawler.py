@@ -6,13 +6,7 @@ from time import sleep
 import requests as rq
 from bs4 import BeautifulSoup
 
-AGENT = """Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:44.0) """ + \
-        """Gecko/20100101 Firefox/44.0"""
-NAMO_URL = "http://www.narendramodi.in/speeches/loadspeeche?page={}&language=hi"
-DATA_FOLDER = "../../data/"
-SLEEP_TIME = 5
-STATUS_OK = 200
-HTTP_CONTENT_LEN_THRESHOLD = 100
+from src.util import constants as GC
 
 
 class SpeechScraper:
@@ -34,21 +28,21 @@ class SpeechScraper:
         counter = 1
         while True:
             req_url = self.url.format(page)
-            resp = rq.get(req_url, headers={'User-Agent': AGENT})
-            if resp.status_code != STATUS_OK:
+            resp = rq.get(req_url, headers={'User-Agent': GC.AGENT})
+            if resp.status_code != GC.STATUS_OK:
                 print "Error Code : " + str(resp.status_code)
                 print "URL : " + self.url
                 sys.exit(1)
             soup = BeautifulSoup(resp.content, 'lxml')
             speeches = soup.find_all('a', class_="left_class")
-            if resp.headers['Content-Length'] < HTTP_CONTENT_LEN_THRESHOLD:
+            if resp.headers['Content-Length'] < GC.HTTP_CONTENT_LEN_THRESHOLD:
                 break
             for i, speech in enumerate(speeches):
                 if i % 2 == 0:
                     speech_url = speech.get('href')
                     speech_title = speech.get_text()
                     speech_resp = rq.get(speech_url,
-                                         headers={'User-Agent': AGENT})
+                                         headers={'User-Agent': GC.AGENT})
                     if speech_resp.status_code != 200:
                         print "Error Code : ", str(resp.status_code)
                         print "Speech URL : ", self.url
@@ -84,5 +78,5 @@ class SpeechScraper:
             f.write(text)
 
 if __name__ == '__main__':
-    scraper = SpeechScraper(NAMO_URL, DATA_FOLDER)
+    scraper = SpeechScraper(GC.NAMO_URL, GC.DATA_FOLDER)
     scraper.scrape()

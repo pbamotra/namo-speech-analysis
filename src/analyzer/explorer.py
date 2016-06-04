@@ -14,12 +14,6 @@ from unidecode import unidecode
 from os.path import join as path_join
 from src.util import constants as GC
 
-
-ASCII_LIMIT = 128
-N_TOP_WORDS = 50
-N_SPEECHES = 500
-N_TOPICS = 10
-
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
                     level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -55,7 +49,7 @@ def valid_word(word, stop_req=False):
     """
     if stop_req:
         return word not in stopwords_set
-    return len(word.strip()) > 0 and ord(word[0]) > ASCII_LIMIT
+    return len(word.strip()) > 0 and ord(word[0]) > GC.ASCII_LIMIT
 
 
 def analyze_speeches(filename="1.txt"):
@@ -67,7 +61,7 @@ def analyze_speeches(filename="1.txt"):
     dictionary = corpora.dictionary.Dictionary()
     train_documents = list()
     all_words = list()
-    for i in xrange(1, N_SPEECHES):
+    for i in xrange(1, GC.N_SPEECHES):
         filename = path_join(GC.SPEECH_FOLDER, str(i) + ".txt")
         with open(filename, "r") as speech_file:
             speech_words = list()
@@ -84,16 +78,17 @@ def analyze_speeches(filename="1.txt"):
     corpus = [dictionary.doc2bow(text) for text in train_documents]
     lda = LdaModel(corpus=corpus,
                    id2word=dictionary,
-                   num_topics=N_TOPICS,
+                   num_topics=GC.N_TOPICS,
                    passes=10,
                    alpha='auto')
 
-    print '{} LDA topics with corresponding top {} words'.format(N_TOPICS, 10)
+    print '{} LDA with corresponding top {} words'.format(GC.N_TOPICS, 10)
     pprint(lda.print_topics())
 
     word_counter = Counter(all_words)
-    print 'Top {} words in {} speeches of NaMo'.format(N_TOP_WORDS, N_SPEECHES)
-    pprint(word_counter.most_common(N_TOP_WORDS))
+    print 'Top {} words in {} speeches of NaMo'.format(GC.N_TOP_WORDS,
+                                                       GC.N_SPEECHES)
+    pprint(word_counter.most_common(GC.N_TOP_WORDS))
 
 
 if __name__ == "__main__":
