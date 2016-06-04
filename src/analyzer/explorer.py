@@ -11,7 +11,10 @@ from gensim.models.ldamodel import LdaModel
 from nltk.corpus import stopwords
 from unidecode import unidecode
 
-DATA_FOLDER = "../../data/"
+from os.path import join as path_join
+from src.util import constants as GC
+
+
 ASCII_LIMIT = 128
 N_TOP_WORDS = 50
 N_SPEECHES = 500
@@ -19,14 +22,17 @@ N_TOPICS = 10
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
                     level=logging.DEBUG)
-logger = logging.getLogger('')
+logger = logging.getLogger(__name__)
 
 
-def get_hindi_stopwords(filename="stopwords_set-words.txt"):
-    """Print stopwords in Hindi.
+def get_hindi_stopwords(filename="stop-words.txt"):
+    """Get stopwords in Hindi.
 
     Args:
     filename - stopwords_set words file
+
+    Returns:
+    set of hindi stop words
     """
     stopwords = []
     with open(filename, "r") as stop_words:
@@ -52,7 +58,7 @@ def valid_word(word, stop_req=False):
     return len(word.strip()) > 0 and ord(word[0]) > ASCII_LIMIT
 
 
-def process_speeches(filename="1.txt"):
+def analyze_speeches(filename="1.txt"):
     """Read a speech file.
 
     Args:
@@ -62,9 +68,8 @@ def process_speeches(filename="1.txt"):
     train_documents = list()
     all_words = list()
     for i in xrange(1, N_SPEECHES):
-        # print 'Processing file', i
-        filename = str(i) + ".txt"
-        with open(DATA_FOLDER + filename, "r") as speech_file:
+        filename = path_join(GC.SPEECH_FOLDER, str(i) + ".txt")
+        with open(filename, "r") as speech_file:
             speech_words = list()
             for line in speech_file:
                 words = line.strip().decode("utf8").split()
@@ -93,5 +98,6 @@ def process_speeches(filename="1.txt"):
 
 if __name__ == "__main__":
     stopwords_set = set(stopwords.words("english"))
-    stopwords_set = stopwords_set.union(get_hindi_stopwords())
-    process_speeches()
+    stopwords_file = path_join(GC.MISC_FOLDER, "stop-words.txt")
+    stopwords_set = stopwords_set.union(get_hindi_stopwords(stopwords_file))
+    analyze_speeches()
