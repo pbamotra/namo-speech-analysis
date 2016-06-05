@@ -43,7 +43,7 @@ class SpeechScraper:
                     speech_title = speech.get_text()
                     speech_resp = rq.get(speech_url,
                                          headers={'User-Agent': GC.AGENT})
-                    if speech_resp.status_code != 200:
+                    if speech_resp.status_code != GC.STATUS_OK:
                         print "Error Code : ", str(resp.status_code)
                         print "Speech URL : ", self.url
                         print "Speech title : ", speech_title
