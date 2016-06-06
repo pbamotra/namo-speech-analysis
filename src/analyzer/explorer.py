@@ -1,4 +1,4 @@
-"""Analizes NaMo's speeches."""
+"""Analyzes NaMo's speeches."""
 
 import logging
 import string
