@@ -9,4 +9,4 @@ Required:
 
 ## To run
     cd namo-speech-analysis
-    python -msrc.analyzer.explorer
+    make install

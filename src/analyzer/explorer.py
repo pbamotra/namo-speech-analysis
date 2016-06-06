@@ -82,7 +82,7 @@ def analyze_speeches(filename="1.txt"):
                    passes=10,
                    alpha='auto')
 
-    print '{} LDA with corresponding top {} words'.format(GC.N_TOPICS, 10)
+    print '{} topics with corresponding top {} words'.format(GC.N_TOPICS, 10)
     pprint(lda.print_topics())
 
     word_counter = Counter(all_words)
